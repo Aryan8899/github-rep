@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regions Mortgage Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body, html {
+            height: 100%;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+            padding: 20px;
+            transition: opacity 0.5s ease;
+        }
+        .left-side {
+            flex: 1;
+            padding: 40px;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: opacity 0.5s ease;
+        }
+        .right-side {
+            flex: 1;
+            background-image: url('image.png'); /* Replace this with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 10px;
+            transition: all 1s ease;
+        }
+        .right-side.expand {
+            width: 100vw;
+            height: 100vh;
+            margin-left: 0;
+            border-radius: 0;
+        }
+        .right-side.expand-fullscreen {
+            width: calc(100vw - 60px); /* Add space for the border */
+            height: calc(100vh - 60px); /* Add space for the border */
+            margin: 30px; /* Border space */
+            border-radius: 20px; /* Rounded border effect */
+            border: 10px solid white; /* White border */
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: white;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2); /* Add shadow */
+            transition: width 1s ease, height 1s ease, margin 1s ease;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: transform 1s ease;
+        }
+        .logo img {
+            width: 40px;
+            margin-bottom: 5px;
+        }
+        .logo.animate {
+            transform: translateY(200px); /* Move the logo down */
+        }
+        .enroll-button {
+            padding: 10px 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 20px;
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 14px;
+            position: relative;
+        }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: absolute;
+            top: 120%; /* Position below the button */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            width: 220px;
+            text-align: left;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .enroll-button:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Tooltip content */
+        .tooltip h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .tooltip ul {
+            padding-left: 20px;
+        }
+
+        .tooltip ul li {
+            list-style: none;
+            margin-bottom: 5px;
+            color: #fff;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .tooltip ul li:before {
+            content: '✔';
+            color: #4CAF50;
+            position: absolute;
+            left: -20px;
+        }
+
+        .welcome-text {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+        .welcome-text h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .welcome-text p {
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .password-group {
+            position: relative;
+        }
+        .password-group .show-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4CAF50;
+            cursor: pointer;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .remember-me input {
+            margin-right: 10px;
+        }
+
+        /* Login button styles */
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #ccc; /* Dark by default */
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-button.active {
+            background-color: #4CAF50; /* Green when enabled */
+        }
+
+        /* Spinner inside the button */
+        .login-button .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            border-left-color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .login-button.loading .spinner {
+            display: block;
+        }
+
+        .login-button.loading .btn-text {
+            visibility: hidden;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .forgot-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .forgot-links a {
+            color: #4CAF50;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 12px;
+            margin-top: auto;
+        }
+        .left-side.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .fullscreen-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .logo-center {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Make sure the logo is on top */
+        }
+
+        .logo-center img {
+            width: 60px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="left-side" id="leftSide">
+            <div>
+                <div class="header">
+                    <div class="logo" id="logo">
+                        <img src="logo.png" alt="Regions Logo">
+                        <span>REGIONS</span>
+                        <span>Mortgage</span>
+                    </div>
+                    
+                    <div>
+                        <span>Are you a new customer?</span>
+                        <a href="#" class="enroll-button">
+                            Enroll Now
+                            <!-- Tooltip -->
+                            <div class="tooltip">
+                                <h3>Enroll now to:</h3>
+                                <ul>
+                                    <li>Access your loans online</li>
+                                    <li>Pay your mortgage online</li>
+                                    <li>View your mortgage statements</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="welcome-text">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to your Regions MyMortgage account.</p>
+                </div>
+                
+                <form onsubmit="return showLoadingScreen(event)">
+                    <div class="form-group">
+                        <label for="online-id">Online ID</label>
+                        <input type="text" id="online-id" oninput="validateForm()">
+                    </div>
+                    <div class="form-group password-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" oninput="validateForm()">
+                        
+                    </div>
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <button type="submit" class="login-button" id="loginBtn" disabled>
+                        <span class="btn-text">Login</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+                
+                <div class="forgot-links">
+                    <a href="#">Forgot Online ID?</a>
+                    <a href="#">Forgot Password?</a>
+                </div>
+            </div>
+            <div class="footer">
+                <span>Equal Housing Lender</span>
+                <span>Member FDIC</span>
+            </div>
+        </div>
+        <div class="right-side" id="rightSide"></div>
+    </div>
+    <div class="fullscreen-overlay" id="overlay">
+        <div class="logo-center">
+            <img src="logo.png" alt="Regions Logo"> <!-- Replace with your logo -->
+        </div>
+    </div>
+
+    <script>
+        // Validate form inputs and toggle button state
+        function validateForm() {
+            const onlineId = document.getElementById('online-id').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            if (onlineId !== '' && password !== '') {
+                loginBtn.disabled = false;
+                loginBtn.classList.add('active');
+            } else {
+                loginBtn.disabled = true;
+                loginBtn.classList.remove('active');
+            }
+        }
+
+        function clearFormData() {
+            document.getElementById('online-id').value = '';
+            document.getElementById('password').value = '';
+            validateForm(); // Call to disable the button again after clearing the form
+        }
+
+        function showLoadingScreen(event) {
+            event.preventDefault();
+
+            const logo = document.getElementById('logo');
+            const rightSide = document.getElementById('rightSide');
+            const leftSide = document.getElementById('leftSide');
+            const overlay = document.getElementById('overlay');
+            const loginBtn = document.getElementById('loginBtn');
+
+            // Add loading class to show spinner in the button
+            loginBtn.classList.add('loading');
+
+            // After a delay, start logo animation and the rest
+            setTimeout(() => {
+                loginBtn.classList.remove('loading'); // Hide the spinner
+                // Move the logo down
+                logo.classList.add('animate');
+
+                // Expand the right-side image
+                rightSide.classList.add('expand');
+
+                // Fade out the left-side content
+                leftSide.classList.add('fade-out');
+
+                // Show overlay with logo animation
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 500);  // Delay before showing the overlay
+
+                // Simulate a loading delay and hide overlay after animation
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                    // Expand the right-side image to fullscreen with border and logo
+                    rightSide.classList.add('expand-fullscreen');
+                }, 1500);  // Delay before fullscreen expansion
+
+                // After a short delay, revert back to the original login screen
+                setTimeout(() => {
+                    rightSide.classList.remove('expand-fullscreen'); // Remove the fullscreen effect
+                    rightSide.classList.remove('expand');            // Remove the expanded view
+                    leftSide.classList.remove('fade-out');           // Show the login form again
+                    logo.classList.remove('animate');                // Reset the logo animation
+                    clearFormData();                                 // Clear the form data
+                }, 3500); // Duration for fullscreen before reverting
+            }, 1000); // Spinner duration (1 second)
+        }
+    </script>
+</body>
+</html>
